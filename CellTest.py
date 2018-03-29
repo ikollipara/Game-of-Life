@@ -17,7 +17,7 @@ class Cell_Test_Case(unittest.TestCase):
         for cell in testCells:
             self.assertIsInstance(cell, Cell)
             self.assertFalse(cell.status)
-            self.assertEqual(cell.y, 1)
+            self.assertEqual(cell.row, 1)
 
     def test_live(self):
         cell = Cell(None, 0, 0)

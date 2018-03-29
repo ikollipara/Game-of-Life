@@ -7,7 +7,7 @@ def main():
     sim.help()
     sim.add_world(60, 20)
     sim.world.populate()
-    sim.world.set_neighbors()
+    sim.world.find_neighbors()
     print(sim.world)
     repeat = True
     while repeat:
@@ -16,5 +16,4 @@ def main():
         if command == 'e':
             repeat = False
     sim.outro()
-
 main()

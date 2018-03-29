@@ -13,12 +13,37 @@ class Simulation(object):
         world = World(y, x)
         self.world = world
 
+    # def main_menu(self):
+    #     options = ['f', 'e', 'a', 'h', 'x']
+    #     print("""[F]ile [E]dit [A]ctions [H]elp E[x]it""")
+    #     command = input()
+    #     command = command[0].lower()
+    #     while command not in options:
+    #         command = input()
+    #         command = command[0].lower()
+    #     if command == 'f':
+    #         self.file_menu()
+    #     elif command == 'e':
+    #         self.edit_menu()
+    #     elif command == 'a':
+    #         self.action_menu()
+    #     elif command == 'h':
+    #         self.help()
+    #     else:
+    #         pass
+    #
+    # def file_menu(self):
+    #     options = ['s', 'l', 'b']
+    #     command = None
+    #     while command != 'b':
+
+
     def menu(self):
-        options = ['p', 'c', 's', 'k', 'r', 'v', 'l', 'a', 'e', 'h']
+        options = ['p', 'c', 's', 'k', 'r', 'v', 'l', 'a', 'e', 'h', 't']
         command = ''
         while command not in options:
             print("""[P]opulate [C]reate [S]im S[K]ip [R]eady-Made Worlds
-    Sa[v]e [L]oad [A]dvance [H]elp [E]xit""")
+    Sa[v]e [L]oad [A]dvance [T]orus [H]elp [E]xit""")
             command = input()
             if len(command) > 1:
                 parameter = command[1:].strip()
@@ -41,6 +66,8 @@ class Simulation(object):
         elif command == 'a':
             self.world.next_gen()
             print(self.world)
+        elif command == 't':
+            self.torus(parameter)
         elif command == 'v':
             if parameter != None:
                 saveName = parameter
@@ -50,6 +77,10 @@ class Simulation(object):
         elif command == 'l':
             fileNames = os.listdir(path='.\Saves')
             if parameter != None:
+                if parameter[-5:] != '.life':
+                    parameter += '.life'
+                else:
+                    pass
                 if parameter in fileNames:
                     self.load(parameter)
                 else:
@@ -67,6 +98,29 @@ class Simulation(object):
         elif command == 'e':
             pass
 
+    def torus(self, parameter):
+        options = ['on', 'off']
+        if parameter != None:
+            if parameter.lower() in options:
+                if parameter.lower() == 'on':
+                    self.world.TorusOn()
+                else:
+                    self.world.TorusOff()
+            else:
+                print("Torus must be On or Off, not {}".format(parameter))
+        else:
+            command = input("On or Off? ")
+            command = command.lower()
+            while command  not in options:
+                command = input("On or Off? ")
+                command = command.lower()
+            if command == 'on':
+                self.world.TorusOn()
+            else:
+                self.world.TorusOff()
+        self.world.find_neighbors()
+        print(self.world)
+
     def populate(self, parameter):
         if parameter != None:
             percent = int(parameter)
@@ -74,7 +128,7 @@ class Simulation(object):
             percent = get_integer("Please enter the percent: ")
         self.world.reset()
         self.world.populate(int(percent))
-        self.world.set_neighbors()
+        self.world.find_neighbors()
         print(self.world)
 
     def create(self, parameter):
@@ -124,6 +178,7 @@ class Simulation(object):
         Load                | Loads the specified saved world from "Saves"
         Populate            | Repopulate the current world via a given percent
         Help                | Brings up this menu
+        Torus               | Makes the edges solid when off, or connected when on
         Exit                | Quits the Program
         ----------------------------------------------------------------------------------------
         """)
@@ -152,7 +207,7 @@ class Simulation(object):
     def load(self, worldSave):
         world = World.from_file(worldSave)
         self.world = world
-        self.world.set_neighbors()
+        self.world.find_neighbors()
         print(self.world)
 
     def save(self, saveName):
@@ -180,7 +235,6 @@ class Simulation(object):
                         pass
                 else:
                     saveName += '.life'
-        print(saveName)
         with open(r'.\Saves\{}'.format(saveName), 'w+') as newWorld:
             fileline = ''
             for line in self.world.cells:
@@ -192,6 +246,7 @@ class Simulation(object):
                     fileline += byte + ','
                 fileline += '\n'
             newWorld.write(fileline)
+        self.world.name = saveName
 
     def intro(self):
         print("""

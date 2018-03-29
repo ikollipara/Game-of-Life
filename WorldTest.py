@@ -7,6 +7,7 @@ class World_Case_Test(unittest.TestCase):
     def test_creation(self):
         world = World(5, 5)
         self.assertIsInstance(world, World)
+        world.create_cells()
         for line in world.cells:
             for cell in line:
                 self.assertIsInstance(cell, Cell)
@@ -16,13 +17,13 @@ class World_Case_Test(unittest.TestCase):
         world.populate(100)
         for line in world.cells:
             for cell in line:
-                if cell.x == 0:
+                if cell.column == 0:
                     pass
-                elif cell.x > world.columns:
+                elif cell.column > world.columns:
                     pass
-                elif cell.y > world.rows:
+                elif cell.row > world.rows:
                     pass
-                elif cell.y == 0:
+                elif cell.row == 0:
                     pass
                 else:
                     self.assertTrue(cell.status)
@@ -53,7 +54,8 @@ class World_Case_Test(unittest.TestCase):
 
     def test_neighbor_count(self):
         world = World(5, 5)
-        world.set_neighbors()
+        world.create_cells()
+        world.find_neighbors()
         for line in world.cells:
             for cell in line:
                 livingNeighbors = len(cell.neighbors)
@@ -61,7 +63,8 @@ class World_Case_Test(unittest.TestCase):
 
     def test_irregular_neighbor_count(self):
         world = World(7, 12)
-        world.set_neighbors()
+        world.create_cells()
+        world.find_neighbors()
         for line in world.cells:
             for cell in line:
                 livingNeighbors = len(cell.neighbors)
@@ -70,7 +73,8 @@ class World_Case_Test(unittest.TestCase):
 
     def test_next_gen(self):
         world = World(3, 3)
-        world.set_neighbors()
+        world.create_cells()
+        world.find_neighbors()
         world.populate(100)
         world.next_gen()
         alive = 0
@@ -84,7 +88,7 @@ class World_Case_Test(unittest.TestCase):
 
     def test_regen(self):
         world = World(3, 3)
-        world.set_neighbors()
+        world.find_neighbors()
         world.cells[0][1].live()
         world.cells[1][0].live()
         world.next_gen()

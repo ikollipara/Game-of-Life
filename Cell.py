@@ -4,8 +4,8 @@ class Cell(object):
     def __init__(self, world, row, column, status=False):
         self.status = status
         self.world = world
-        self.x = column
-        self.y = row
+        self.column = column
+        self.row = row
         self.nextStatus = None
         self.neighbors = []
 
